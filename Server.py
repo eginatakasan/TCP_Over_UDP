@@ -32,11 +32,11 @@ with socket.socket(socket.AF_INET, socket.SOCK_DGRAM) as s:
                 file_id[p.id] = open(p.id,'wb')
 
             if (p.type==2):
-                print(file_id[p.id])
+                print(p.data)
                 print("finish")
 
                 del file_id[p.id]
         
             p.type+=1
-            p_to_send = packet.MakePacket(p.type, p.id, p.sequence, p.length, p.checksum, p.data) 
+            p_to_send = packet.MakePacket(p.type,0,0,0,0, {}) 
             s.sendto(p_to_send.combine_rows(), addr)

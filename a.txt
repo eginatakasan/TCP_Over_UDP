@@ -1,0 +1,3 @@
+Add line-height:3em; to the #button style. Make the value of it the same as the height. If you need two lines, make it half the height, and so on. Just make sure to make your font-size smaller the more lines you have.
+
+If you want to keep the font-size the same, you can make the button taller by adjusting the height to the amount of lines you have.

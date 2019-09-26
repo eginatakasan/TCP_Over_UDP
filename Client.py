@@ -5,30 +5,40 @@ import os
 
 # HOST ='127.0.0.1'
 # PORT = 6134 
-TIMED_OUT = 2
+TIMED_OUT = 40
 int_id =2
 package =[]
+BUFFER = 12345
 progressBar = 0
-BUFFER = 4096
+
+
 def sender (host,port,file_name):
 
     port_int = int(port)
     file_size = os.path.getsize(file_name) 
     package = MakePackets(2,file_name)
     with socket.socket(socket.AF_INET, socket.SOCK_DGRAM) as s:
-        for a in package:
+        length =0
+        while (length<=len(package)):
             try:
                 print('Sending package ...')
-                a.print_packet_info()
-                # print(a.data)
-                s.sendto(a.combine_rows(),0,(host,port_int))
+                s.sendto(package[length].combine_rows(),0,(host,port_int))
                 # if (s.sendto(p,0,(host,port_int))):
-
+                print("type :",package[length].type)
                 s.settimeout(TIMED_OUT)
 
                 print('Waiting..')
-                # data,addr = s.recvfrom(BUFFER)
-                print('Sending next package... ')
+                data,addr = s.recvfrom(BUFFER)
+                pnext = Packet(data)
+                if (pnext.type == 3):
+                    print("File successfully send")
+                    
+                if (pnext.type == 1):
+                    print('Sending next package... ')
+                    length+=1
+                else :
+                    length=length
+                    
             except s.timeout :
                 print("Sorry... failed to send file")
         
