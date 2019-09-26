@@ -5,7 +5,7 @@ import os
 
 # HOST ='127.0.0.1'
 # PORT = 6134 
-TIMED_OUT = 40
+TIMED_OUT = 2
 int_id =2
 package =[]
 BUFFER = 12345
@@ -19,7 +19,7 @@ def sender (host,port,file_name):
     package = MakePackets(2,file_name)
     with socket.socket(socket.AF_INET, socket.SOCK_DGRAM) as s:
         length =0
-        while (length<=len(package)):
+        while (length<len(package)):
             try:
                 print('Sending package ...')
                 s.sendto(package[length].combine_rows(),0,(host,port_int))
@@ -32,7 +32,7 @@ def sender (host,port,file_name):
                 pnext = Packet(data)
                 if (pnext.type == 3):
                     print("File successfully send")
-                    
+                    break
                 if (pnext.type == 1):
                     print('Sending next package... ')
                     length+=1
