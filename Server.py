@@ -27,14 +27,19 @@ def receive():
 
             if (packet.get_packet_checksum(csums_list)==p.checksum):
                 if (p.id in file_id):
-                    file_id[p.id].write(p.data)
+                    # file_id[p.id].write(p.data)
+                    print('a')
                 else:
                     file_name = 'output' + str(p.id) + '.txt'
                     file_id[p.id] = open(file_name,'wb')
+                
+                file_id[p.id].write(p.data)
+                file_id[p.id].flush()
 
                 if (p.type==2):
                     file_name = 'output' + str(p.id) + '.txt'
-                    print(printFileByteContent(file_name))
+
+                    printFileByteContent(file_name)
                     print("finish")
 
                     del file_id[p.id]
@@ -45,9 +50,10 @@ def receive():
 
 def printFileByteContent(fileName):
     f = open(fileName, 'rb')
-    file_content = f.read()
+    f.seek(0)
+    print(f.read())
     f.close()
-    return file_content
+    # return file_content
 
 if __name__=='__main__':
     threads = []

@@ -6,15 +6,19 @@ import os
 # HOST ='127.0.0.1'
 # PORT = 6134 
 TIMED_OUT = 2
-int_id =2
+int_id =0
 package =[]
 BUFFER = 12345
 
 def sender (host,port,file_name):
+    global int_id
+    
     PROGRESS_NUMBER = 0
     port_int = int(port)
     file_size = os.path.getsize(file_name) 
-    package = MakePackets(2,file_name)
+    package = MakePackets(int_id,file_name)
+    
+    int_id+=1
     with socket.socket(socket.AF_INET, socket.SOCK_DGRAM) as s:
         length =0
         i=0
