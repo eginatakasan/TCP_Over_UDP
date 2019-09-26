@@ -1,3 +1,4 @@
+# DATA_DIVIDE_LENGTH = 32768
 DATA_DIVIDE_LENGTH = 32768
 DATA_LENGTH = DATA_DIVIDE_LENGTH
 
@@ -5,8 +6,6 @@ DATA_LENGTH = DATA_DIVIDE_LENGTH
 class Packet:
     def __init__(self, list_bytes = None):
         if list_bytes != None:
-            for a in list_bytes:
-                print(a)
             self.type = list_bytes[0] >> 4
             self.id = list_bytes[0] & 0xF
             self.sequence = (list_bytes[1] << 8) + list_bytes[2]
@@ -25,7 +24,7 @@ class Packet:
         print(self.length)
         print('checksum : ')
         print(self.checksum)
-        print(self.data)
+        # print(self.data)
         print()
     
     def combine_rows(self):
@@ -53,8 +52,13 @@ def MakePackets(int_id, file):
     sequence = get_packet_sequence(len(data))
     length = get_packet_length(len(data), remainder)
 
-    list_for_csum = combine_rows_for_csum(types, id, sequence, length, data)
-    checksum = get_packet_checksum(len(data), list_for_csum)
+    checksum = []
+    list_for_csum = []
+
+    for x in range(0,len(data)):
+        list_for_csum.append(combine_rows_for_csum(types[x], id[x], sequence[x], length[x], data[x]))
+    for lbyte in list_for_csum:
+        checksum.append(get_packet_checksum(lbyte))
 
     packets = []
     for x in range (0,len(data)):
@@ -72,20 +76,16 @@ def MakePacket(type, id, sequence, length, csum, data):
     p.data = data
     return p
 
-def combine_rows_for_csum(types, id, sequence, length, data):
-    list_bytes = []
+def combine_rows_for_csum(type, id, sequence, length, data):
+    row_data = data_divider(data,1)
 
-    for x in range(0,len(data)):
-        row_data = data_divider(data[x],1)
+    temp = convert_int_to_binary((type << 4) + id, 1)
+    temp +=(convert_int_to_binary(sequence, 2))
+    temp +=(convert_int_to_binary(length, 2))
+    for row in row_data:
+        temp += row
 
-        temp = convert_int_to_binary((types[x] << 4) + id[x], 1)
-        temp +=(convert_int_to_binary(sequence[x], 2))
-        temp +=(convert_int_to_binary(length[x], 2))
-        for row in row_data:
-            temp += row
-        list_bytes.append(temp)
-
-    return list_bytes
+    return temp
 
 def convert_file_to_binary(fileName):
     f = open(fileName, 'rb')
@@ -133,15 +133,28 @@ def get_packet_length(len, remainder):
             length.append(DATA_DIVIDE_LENGTH)
     return length
 
-def get_packet_checksum(len, list_bytes):
+def get_packet_checksum(list_bytes):
     checksum = []
+    
     temp = 0
-    for x in range (len):
-        # print(list_bytes)
-        packet_wo_checksum = data_divider(list_bytes[x], 2)
-        for row in packet_wo_checksum:
-            temp ^= convert_binary_to_int(row)
-        checksum.append(temp)
+    # print(list_bytes)
+    packet_wo_checksum = data_divider(list_bytes, 2)
+    # print(packet_wo_checksum)
+    # print(packet_wo_checksum)
+    for row in packet_wo_checksum:
+        # print(x)
+        # print("row")
+        # print(bin(convert_binary_to_int(row)))
+        # if (i < 15):
+        #     # print(temp)
+        # i += 1
+        temp ^= convert_binary_to_int(row)
+        
+        # print(bin(temp))
+    # print()
+
+    checksum = temp
+    # checksum.append(temp)
     # print(checksum)
 
     # print(convert_int_to_binary(checksum[0], 16))
@@ -157,9 +170,9 @@ def get_packet_checksum(len, list_bytes):
 #         zeros = convert_int_to_binary(0, remainder)
 #         list_of_bytes.append(temp + )
 
-p = MakePackets(4,"test.txt")
-for a in p :
-    a.print_packet_info()
-    print(a.combine_rows())
-    b = Packet(a.combine_rows())
-    b.print_packet_info()
+# p = MakePackets(4,"test.txt")
+# for a in p :
+#     a.print_packet_info()
+#     print(a.combine_rows())
+#     b = Packet(a.combine_rows())
+#     b.print_packet_info()

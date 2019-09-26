@@ -19,6 +19,8 @@ def sender (host,port,file_name):
         for a in package:
             try:
                 print('Sending package ...')
+                a.print_packet_info()
+                # print(a.data)
                 s.sendto(a.combine_rows(),0,(host,port_int))
                 # if (s.sendto(p,0,(host,port_int))):
 
