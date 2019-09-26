@@ -7,10 +7,10 @@ class Packet:
         if list_bytes != None:
             self.type = convert_binary_to_int(list_bytes[0]) >> 4
             self.id = convert_binary_to_int(list_bytes[0]) & 0xF
-            self.sequence = 0
-            self.length = 0
-            self.checksum = 0
-            self.data = []
+            self.sequence = convert_binary_to_int(list_bytes[1])
+            self.length = convert_binary_to_int(list_bytes[2])
+            self.checksum = convert_binary_to_int(list_bytes[3])
+            self.data = list_bytes[4:]
     
     def print_packet_info(self):
         print('type : ')
@@ -23,7 +23,22 @@ class Packet:
         print(self.length)
         print('checksum : ')
         print(self.checksum)
+        print(self.data)
         print()
+    
+    def combine_rows(self):
+        output = []
+        row_data = data_divider(self.data,1)
+        print()
+        output.append(convert_int_to_binary((self.type << 4) + self.id, 1))
+        output.append(convert_int_to_binary(self.sequence, 2))
+        output.append(convert_int_to_binary(self.length, 2))
+        output.append(convert_int_to_binary(self.checksum,2))
+
+        for row in row_data:
+            output.append(row)
+
+        return output
         
 
 def MakePackets(int_id, file):
@@ -69,22 +84,6 @@ def combine_rows_for_csum(types, id, sequence, length, data):
         list_bytes.append(temp)
 
     return list_bytes
-
-def combine_rows(types, id, sequence, length, csum, data):
-    e = []
-
-    row_data = data_divider(data,1)
-
-    a = convert_int_to_binary((types << 4) + id, 1)
-    b = (convert_int_to_binary(sequence, 2))
-    c = (convert_int_to_binary(length, 2))
-    d = (convert_int_to_binary(csum,2))
-
-    for row in row_data:
-        e.append(row)
-
-    return a,b,c,d,e
-
 
 def convert_file_to_binary(fileName):
     f = open(fileName, 'rb')
@@ -141,9 +140,9 @@ def get_packet_checksum(len, list_bytes):
         for row in packet_wo_checksum:
             temp ^= convert_binary_to_int(row)
         checksum.append(temp)
-    print(checksum)
+    # print(checksum)
 
-    print(convert_int_to_binary(checksum[0], 16))
+    # print(convert_int_to_binary(checksum[0], 16))
     return checksum
 
 # def add_zero_padding(list_of_bytes):
@@ -156,6 +155,9 @@ def get_packet_checksum(len, list_bytes):
 #         zeros = convert_int_to_binary(0, remainder)
 #         list_of_bytes.append(temp + )
 
-p = MakePackets(4,"a.jpg")
+p = MakePackets(4,"test.txt")
 for a in p :
     a.print_packet_info()
+    print(a.combine_rows())
+    b = Packet(a.combine_rows())
+    b.print_packet_info()
