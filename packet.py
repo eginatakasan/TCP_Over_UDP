@@ -5,12 +5,14 @@ DATA_LENGTH = DATA_DIVIDE_LENGTH
 class Packet:
     def __init__(self, list_bytes = None):
         if list_bytes != None:
-            self.type = convert_binary_to_int(list_bytes[0]) >> 4
-            self.id = convert_binary_to_int(list_bytes[0]) & 0xF
-            self.sequence = convert_binary_to_int(list_bytes[1])
-            self.length = convert_binary_to_int(list_bytes[2])
-            self.checksum = convert_binary_to_int(list_bytes[3])
-            self.data = list_bytes[4:]
+            for a in list_bytes:
+                print(a)
+            self.type = list_bytes[0] >> 4
+            self.id = list_bytes[0] & 0xF
+            self.sequence = (list_bytes[1] << 8) + list_bytes[2]
+            self.length = (list_bytes[3] << 8) + list_bytes[4]
+            self.checksum = (list_bytes[5] << 8) + list_bytes[6]
+            self.data = list_bytes[7:]
     
     def print_packet_info(self):
         print('type : ')
@@ -38,7 +40,7 @@ class Packet:
         for row in row_data:
             output.append(row)
 
-        return output
+        return b''.join(output)
         
 
 def MakePackets(int_id, file):

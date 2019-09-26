@@ -14,13 +14,12 @@ def sender (host,port,file_name):
 
     port_int = int(port)
     file_size = os.path.getsize(file_name) 
-    p = Packet()
     package = MakePackets(2,file_name)
     with socket.socket(socket.AF_INET, socket.SOCK_DGRAM) as s:
         for a in package:
             try:
                 print('Sending package ...')
-                s.sendto(p.combine_rows(),0,(host,port_int))
+                s.sendto(a.combine_rows(),0,(host,port_int))
                 # if (s.sendto(p,0,(host,port_int))):
 
                 s.settimeout(TIMED_OUT)
