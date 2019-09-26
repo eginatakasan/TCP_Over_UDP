@@ -9,8 +9,7 @@ TIMED_OUT = 2
 int_id =2
 package =[]
 BUFFER = 12345
-progressBar = 0
-
+PROGRESS_NUMBER = 0
 
 def sender (host,port,file_name):
 
@@ -19,9 +18,14 @@ def sender (host,port,file_name):
     package = MakePackets(2,file_name)
     with socket.socket(socket.AF_INET, socket.SOCK_DGRAM) as s:
         length =0
+        i=0
         while (length<len(package)):
             try:
-                print('Sending package ...')
+                global PROGRESS_NUMBER
+                PROGRESS_NUMBER += package[i].length
+                i+=1
+                print(PROGRESS_NUMBER)
+                print('Sending package ...   ' + str(PROGRESS_NUMBER/file_size*100//1) + '%')
                 s.sendto(package[length].combine_rows(),0,(host,port_int))
                 # if (s.sendto(p,0,(host,port_int))):
                 print("type :",package[length].type)
