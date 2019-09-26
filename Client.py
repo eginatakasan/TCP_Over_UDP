@@ -9,10 +9,9 @@ TIMED_OUT = 2
 int_id =2
 package =[]
 BUFFER = 12345
-PROGRESS_NUMBER = 0
 
 def sender (host,port,file_name):
-
+    PROGRESS_NUMBER = 0
     port_int = int(port)
     file_size = os.path.getsize(file_name) 
     package = MakePackets(2,file_name)
@@ -21,14 +20,10 @@ def sender (host,port,file_name):
         i=0
         while (length<len(package)):
             try:
-                global PROGRESS_NUMBER
                 PROGRESS_NUMBER += package[i].length
                 i+=1
-                print(PROGRESS_NUMBER)
                 print('Sending package ...   ' + str(PROGRESS_NUMBER/file_size*100//1) + '%')
                 s.sendto(package[length].combine_rows(),0,(host,port_int))
-                # if (s.sendto(p,0,(host,port_int))):
-                print("type :",package[length].type)
                 s.settimeout(TIMED_OUT)
 
                 print('Waiting..')
@@ -61,7 +56,7 @@ if __name__ == '__main__':
     if (n_file<=5):
         #threading utk banyak files
         for i in range(n_file):
-            jenis = int(input("Nomor"))
+            jenis = int(input("Nomor: "))
             if (jenis ==1):              
                 file_name = input("Nama file: ")
                 files.append(file_name)

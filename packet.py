@@ -25,13 +25,11 @@ class Packet:
         print(self.length)
         print('checksum : ')
         print(self.checksum)
-        # print(self.data)
         print()
     
     def combine_rows(self):
         output = []
         row_data = data_divider(self.data,1)
-        print()
         output.append(convert_int_to_binary((self.type << 4) + self.id, 1))
         output.append(convert_int_to_binary(self.sequence, 2))
         output.append(convert_int_to_binary(self.length, 2))
@@ -138,42 +136,10 @@ def get_packet_checksum(list_bytes):
     checksum = []
     
     temp = 0
-    # print(list_bytes)
     packet_wo_checksum = data_divider(list_bytes, 2)
-    # print(packet_wo_checksum)
-    # print(packet_wo_checksum)
+
     for row in packet_wo_checksum:
-        # print(x)
-        # print("row")
-        # print(bin(convert_binary_to_int(row)))
-        # if (i < 15):
-        #     # print(temp)
-        # i += 1
         temp ^= convert_binary_to_int(row)
         
-        # print(bin(temp))
-    # print()
-
     checksum = temp
-    # checksum.append(temp)
-    # print(checksum)
-
-    # print(convert_int_to_binary(checksum[0], 16))
     return checksum
-
-# def add_zero_padding(list_of_bytes):
-#     idx = len(list_of_bytes)-1
-#     remainder = list_of_bytes[idx] % 2
-#     print(remainder)
-#     if (remainder != 0):
-#         temp = list_of_bytes.pop(idx)
-#         print(temp)
-#         zeros = convert_int_to_binary(0, remainder)
-#         list_of_bytes.append(temp + )
-
-# p = MakePackets(4,"test.txt")
-# for a in p :
-#     a.print_packet_info()
-#     print(a.combine_rows())
-#     b = Packet(a.combine_rows())
-#     b.print_packet_info()
